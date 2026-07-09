@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Handoff contracts — quality expectations, made portable</title>
+<meta name="description" content="A lightweight contract format for quality expectations at the handoffs between people and AI agents. A working draft by David McGaw.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F5F6F2;
+    --panel: #EDEFE8;
+    --ink: #1C2422;
+    --muted: #5D6761;
+    --rule: #D7DBD2;
+    --green: #1F6B41;
+    --green-dark: #175534;
+    --term-bg: #14201A;
+    --term-ink: #CFE6D8;
+    --term-dim: #7FA08D;
+    --max: 1060px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--green-dark); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:hover { color: var(--green); }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--green); outline-offset: 3px; border-radius: 2px;
+  }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- document header ---------- */
+  header.doc {
+    border-bottom: 1px solid var(--rule);
+    padding: 18px 0;
+  }
+  header.doc .wrap {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap;
+  }
+  .wordmark {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .doc-meta {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px; color: var(--muted); letter-spacing: 0.06em;
+  }
+  .doc-meta .badge {
+    color: var(--green-dark);
+    border: 1px solid var(--green);
+    border-radius: 3px;
+    padding: 1px 7px;
+    margin-left: 10px;
+  }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 88px 0 64px; }
+  .hero h1 {
+    font-family: "Newsreader", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-size: clamp(42px, 6.4vw, 76px);
+    line-height: 1.04;
+    letter-spacing: -0.015em;
+    max-width: 15ch;
+  }
+  .hero h1 em { font-style: italic; color: var(--green-dark); }
+  .hero p.lede {
+    margin-top: 28px;
+    font-size: 20px;
+    line-height: 1.55;
+    max-width: 58ch;
+    color: var(--ink);
+  }
+  .hero p.lede strong { font-weight: 600; }
+  .hero .actions { margin-top: 36px; display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn {
+    display: inline-block;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 600; font-size: 15px;
+    padding: 11px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+  }
+  .btn.primary { background: var(--ink); color: var(--paper); }
+  .btn.primary:hover { background: var(--green-dark); color: var(--paper); }
+  .btn.ghost { border: 1px solid var(--ink); color: var(--ink); }
+  .btn.ghost:hover { border-color: var(--green-dark); color: var(--green-dark); }
+
+  /* ---------- section scaffolding ---------- */
+  section { padding: 64px 0; border-top: 1px solid var(--rule); }
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--green-dark);
+    margin-bottom: 18px;
+  }
+  h2 {
+    font-family: "Newsreader", serif;
+    font-weight: 400;
+    font-size: clamp(28px, 3.6vw, 40px);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    max-width: 24ch;
+    margin-bottom: 18px;
+  }
+  .measure { max-width: 62ch; color: var(--ink); }
+  .measure + .measure { margin-top: 14px; }
+
+  /* ---------- the seam (signature) ---------- */
+  .seam-grid {
+    margin-top: 44px;
+    display: grid;
+    grid-template-columns: 1fr 44px 1fr;
+    align-items: stretch;
+  }
+  .pane { border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+  .pane-head {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 12px 22px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .pane.human { background: #FBFBF8; }
+  .pane.human .pane-head { color: var(--muted); background: var(--panel); }
+  .pane.human .pane-body { padding: 26px 26px 30px; }
+  .clause { padding: 14px 0; border-bottom: 1px dashed var(--rule); }
+  .clause:last-child { border-bottom: none; padding-bottom: 0; }
+  .clause dt {
+    font-family: "Newsreader", serif;
+    font-size: 20px; font-style: italic;
+    color: var(--green-dark);
+    margin-bottom: 4px;
+  }
+  .clause dd { font-size: 15.5px; color: var(--ink); line-height: 1.55; }
+
+  .pane.agent { background: var(--term-bg); border-color: #2A3C32; }
+  .pane.agent .pane-head { color: var(--term-dim); background: #0F1913; border-color: #2A3C32; }
+  .pane.agent pre {
+    padding: 24px 26px 30px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: var(--term-ink);
+    overflow-x: auto;
+  }
+  .pane.agent .k { color: var(--term-dim); }
+  .pane.agent .g { color: #7ED9A5; }
+
+  .seam {
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .seam::before {
+    content: "";
+    position: absolute; top: 8px; bottom: 8px; left: 50%;
+    width: 2px; background: var(--green);
+  }
+  .seam-label {
+    position: relative;
+    background: var(--paper);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--green-dark);
+    writing-mode: vertical-rl;
+    padding: 10px 3px;
+  }
+  .seam-note {
+    margin-top: 20px;
+    font-size: 15px; color: var(--muted);
+    font-style: italic;
+    font-family: "Newsreader", serif;
+    font-size: 17px;
+  }
+
+  /* ---------- why now ---------- */
+  .three { margin-top: 36px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .three h3 {
+    font-family: "Newsreader", serif;
+    font-weight: 500; font-size: 21px;
+    margin-bottom: 8px;
+  }
+  .three p { font-size: 15.5px; color: var(--ink); }
+  .three .src {
+    display: block; margin-top: 10px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12.5px;
+  }
+
+  /* ---------- status ---------- */
+  .status-grid { margin-top: 32px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px 40px; max-width: 780px; }
+  .status-item {
+    display: flex; justify-content: space-between; gap: 16px;
+    padding: 12px 0; border-bottom: 1px solid var(--rule);
+    font-size: 15.5px;
+  }
+  .status-item .tag {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted); white-space: nowrap;
+  }
+  .status-item .tag.now { color: var(--green-dark); }
+
+  /* ---------- footer ---------- */
+  footer { border-top: 1px solid var(--rule); padding: 44px 0 60px; }
+  footer .wrap { display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+  footer .credit { font-size: 15px; max-width: 46ch; }
+  footer .legal {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12.5px; color: var(--muted); line-height: 2;
+    text-align: right;
+  }
+  @media (max-width: 860px) {
+    .hero { padding: 60px 0 48px; }
+    .seam-grid { grid-template-columns: 1fr; grid-template-rows: auto 44px auto; }
+    .seam::before { top: 50%; bottom: auto; left: 8px; right: 8px; width: auto; height: 2px; }
+    .seam-label { writing-mode: horizontal-tb; padding: 3px 10px; }
+    .three, .status-grid { grid-template-columns: 1fr; }
+    footer .legal { text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<header class="doc">
+  <div class="wrap">
+    <span class="wordmark">Handoff&nbsp;Contracts</span>
+    <span class="doc-meta">Working draft<span class="badge">v0.1 · July 2026</span></span>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="hero">
+      <h1>The slop is in the <em>handoffs.</em></h1>
+      <p class="lede">AI has made drafting cheap and calibration scarce. Work that looks finished arrives subtly wrong, and someone downstream pays to repair it. <strong>Handoff contracts</strong> make quality expectations explicit and portable — between people, and between people and AI agents.</p>
+      <div class="actions">
+        <a class="btn primary" href="https://github.com/handoffcontracts/handoffcontracts">Read the draft spec on GitHub</a>
+        <a class="btn ghost" href="https://uxhumanist.substack.com">Follow the writing</a>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <p class="eyebrow">The format</p>
+      <h2>Every contributor declares four things.</h2>
+      <p class="measure">What I contribute. What I require. What I return. What “done” looks like — anchored by an exemplar (“like the NewCo report”) plus a short delta (“shorter; board audience”). Senior practitioners already talk this way; nobody has written it down.</p>
+
+      <div class="seam-grid">
+        <div class="pane human">
+          <div class="pane-head">Humans get norms</div>
+          <div class="pane-body">
+            <dl>
+              <div class="clause">
+                <dt>I contribute</dt>
+                <dd>Positioning analysis and two recommendations.</dd>
+              </div>
+              <div class="clause">
+                <dt>I require</dt>
+                <dd>The competitor feature matrix, confirmed before I begin.</dd>
+              </div>
+              <div class="clause">
+                <dt>I return</dt>
+                <dd>An annotated outline — twelve to fifteen slides’ worth of argument.</dd>
+              </div>
+              <div class="clause">
+                <dt>Done looks like</dt>
+                <dd>The designer can build slides without asking what any bullet means.</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <div class="seam" aria-hidden="true"><span class="seam-label">the handoff</span></div>
+
+        <div class="pane agent">
+          <div class="pane-head">Agents get schemas</div>
+          <pre><span class="k">handoff_contract:</span> <span class="g">"0.1"</span>
+<span class="k">contributor:</span>
+  <span class="k">id:</span> agent-claude
+  <span class="k">contributes:</span> <span class="g">"Competitor feature matrix"</span>
+  <span class="k">requires:</span>
+    - <span class="k">input:</span> <span class="g">"Confirmed competitor list"</span>
+      <span class="k">blocking:</span> true   <span class="k"># fails closed</span>
+  <span class="k">done_looks_like:</span> <span class="g">"Every cell sourced;
+    no unverified claims"</span>
+  <span class="k">exemplar:</span>
+    <span class="k">ref:</span> <span class="g">"exidx://team/atlas-matrix"</span>
+  <span class="k">delta:</span>
+    <span class="k">scope:</span> <span class="g">"Add pricing tier column"</span></pre>
+        </div>
+      </div>
+      <p class="seam-note">The asymmetry is deliberate: an agent will not proceed without its declared inputs; a human gets an advisory flag when a deliverable diverges from the contract.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="eyebrow">Why now</p>
+      <h2>The joints are where the value lives — and where the damage lands.</h2>
+      <div class="three">
+        <div>
+          <h3>Slop crosses boundaries.</h3>
+          <p>“Workslop” transfers repair costs to whoever receives it; across organizations it erodes trust in the process itself.</p>
+          <a class="src" href="https://tdavenport.substack.com/p/ten-reasons-why-we-wont-see-productivity">Davenport, 2026 →</a>
+        </div>
+        <div>
+          <h3>Chains, not tasks.</h3>
+          <p>AI’s value accrues to chains of activities — and the cost of handing off intermediate outputs shapes where that value lands.</p>
+          <a class="src" href="https://www.nber.org/papers/w34859">NBER w34859 →</a>
+        </div>
+        <div>
+          <h3>Structure is solved. Quality isn’t.</h3>
+          <p>Flash-teams research answered who does what, when. How good, in what register, at what depth — no format specifies it. This one does.</p>
+          <a class="src" href="https://hci.stanford.edu/publications/2012/flashteams/flashteams-uist2012.pdf">Retelny et al., UIST →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="eyebrow">Status</p>
+      <h2>Built to be tested, not admired.</h2>
+      <p class="measure">This is a working draft with pre-specified conditions under which we would conclude it is wrong. In progress for Q3 2026:</p>
+      <div class="status-grid">
+        <div class="status-item"><span>v0.1 schema, annotated</span><span class="tag now">Draft</span></div>
+        <div class="status-item"><span>HANDOFF.md authoring convention</span><span class="tag now">Draft</span></div>
+        <div class="status-item"><span>Federated context-file template</span><span class="tag">Q3 2026</span></div>
+        <div class="status-item"><span>Agent A/B experiments, blind-judged</span><span class="tag">Q3 2026</span></div>
+        <div class="status-item"><span>Practitioner calibration interviews</span><span class="tag">Q3 2026</span></div>
+        <div class="status-item"><span>Kill criteria & measures</span><span class="tag now">Published in spec</span></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="credit">Handoff contracts is a working concept originated by <a href="https://mcgaw.net">David McGaw</a>, a design strategist and UX researcher writing at <a href="https://uxhumanist.substack.com">The UX Humanist</a>. Collaborators who want to break it in instructive places are welcome — <a href="https://github.com/handoffcontracts/handoffcontracts/issues">open an issue</a>.</p>
+    <p class="legal">© 2026 David McGaw<br>Spec &amp; docs CC BY 4.0 · Code MIT<br>Not affiliated with Anthropic’s MCP or Innovaccer’s HMCP</p>
+  </div>
+</footer>
+
+</body>
+</html>
