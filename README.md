@@ -10,7 +10,7 @@ A handoff contract makes those expectations explicit and portable. Each contribu
 - **What I require** — the inputs I need before starting
 - **What I return** — the form the work arrives in
 - **What “done” looks like** — acceptance criteria at my handoff point
-- **What the work is _not_ for** – fitness criteria to match the right work with the right situation
+- **What the work is _not_ for** — fitness criteria to match the right work with the right situation
 
 …anchored by an **exemplar** (“like the NewCo marketing report”) plus a **constrained delta** (“shorter; board audience, not product team”). Senior practitioners already talk this way. This project formalizes it.
 
