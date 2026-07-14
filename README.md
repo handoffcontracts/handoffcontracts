@@ -16,12 +16,12 @@ A handoff contract makes those expectations explicit and portable. Each contribu
 
 ## Status
 
-🚧 **Early and unstable.** This is a research provocation with a v0.1 draft schema, not a finished standard. Expect breaking changes. The concept is described in depth at [handoffcontracts.com](https://handoffcontracts.com) and in writing at [The UX Humanist](https://uxhumanist.substack.com).
+🚧 **Early and unstable.** This is a research provocation with a v0.2 draft schema, not a finished standard. Expect breaking changes. The concept is described in depth at [handoffcontracts.com](https://handoffcontracts.com) and in writing at [The UX Humanist](https://uxhumanist.substack.com).
 
 ## A minimal example
 
 ```yaml
-handoff_contract: "0.1"
+handoff_contract: "0.2"
 
 contributor:
   id: strategist-jk
