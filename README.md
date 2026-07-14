@@ -10,7 +10,7 @@ A handoff contract makes those expectations explicit and portable. Each contribu
 - **What I require** — the inputs I need before starting
 - **What I return** — the form the work arrives in
 - **What “done” looks like** — acceptance criteria at my handoff point
-- **What the work is _not_ for** — fitness criteria to match the right work with the right situation
+- **What it’s for** — the decisions it enables, the audience it serves, and what it is *not* for
 
 …anchored by an **exemplar** (“like the NewCo marketing report”) plus a **constrained delta** (“shorter; board audience, not product team”). Senior practitioners already talk this way. This project formalizes it.
 
@@ -44,11 +44,27 @@ contributor:
 
 Enforcement is deliberately asymmetric: AI agents **fail closed** on missing required inputs; humans get **advisory checkpoints** that flag divergence at handoff. Humans get norms; agents get schemas.
 
+## Validating a contract
+
+The schema is machine-enforceable. To check a contract file:
+
+```bash
+pip install pyyaml jsonschema
+python scripts/validate.py examples/positioning-deck.handoff.yaml
+```
+
+The schema enforces the format’s design commitments: the delta
+vocabulary is closed (unknown dimensions are rejected), and
+`checkpoint` accepts only `advisory` or `fail_closed`. See
+[`schema/handoff-contract.schema.json`](schema/handoff-contract.schema.json)
+for the annotated field reference.
+
 ## What’s here (and coming)
 
 | Item | Status |
 |---|---|
-| v0.1 schema (annotated) | Draft |
+| v0.2 schema, machine-validatable ([`schema/`](schema/)) | Draft |
+| Worked example ([`examples/`](examples/)) | Draft |
 | `HANDOFF.md` authoring convention | Draft |
 | Federated context-file template (shared standards vs. individual judgment) | In progress — target Sept 2026 |
 | Agent A/B experiment harness (same brief, with/without contract, blind-judged) | In progress — target Sept 2026 |
