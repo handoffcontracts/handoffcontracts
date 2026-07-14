@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://handoffcontracts.com/schema/v0.2/handoff-contract.schema.json",
+  "title": "Handoff contract",
+  "description": "A lightweight contract format for quality expectations at the handoffs between people and AI agents. Draft v0.2 — expect breaking changes. Most fields are optional by design (lazy elaboration): a minimal contract should cost almost nothing to author, gaining specificity only where a collaboration has demonstrated it needs it.",
+  "type": "object",
+  "required": ["handoff_contract", "contributors"],
+  "properties": {
+    "handoff_contract": {
+      "description": "Schema version this document conforms to.",
+      "type": "string",
+      "enum": ["0.2"]
+    },
+    "project": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "brief": {
+          "description": "One paragraph, plain language.",
+          "type": "string"
+        },
+        "quality_spectrum": {
+          "description": "Where this project sits between speed and polish. The single tacit assumption most likely to wreck a zero-history handoff.",
+          "type": "string",
+          "enum": ["sketch", "working", "polished", "production"]
+        },
+        "quality_notes": {
+          "description": "What the spectrum position means for THIS project.",
+          "type": "string"
+        },
+        "glossary": {
+          "description": "Contested terms, defined once (e.g., what 'strategist' means on this team).",
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+    "contributors": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/contributor" }
+    }
+  },
+  "$defs": {
+    "contributor": {
+      "type": "object",
+      "required": ["id", "kind", "contributes"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": {
+          "type": "string",
+          "enum": ["human", "agent"]
+        },
+        "role": {
+          "description": "Plain-language role, not a job title.",
+          "type": "string"
+        },
+
+        "contributes": {
+          "description": "Element 1 of 5: what I produce.",
+          "type": "string"
+        },
+        "requires": {
+          "description": "Element 2 of 5: what you must give me to begin.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["input"],
+            "properties": {
+              "input": { "type": "string" },
+              "from": {
+                "description": "A contributor id, or 'client', or 'kickoff'.",
+                "type": "string"
+              },
+              "blocking": {
+                "description": "Can I start without it? For agent contributors, blocking inputs fail closed.",
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "returns": {
+          "description": "Element 3 of 5: the deliverable, named concretely.",
+          "type": "string"
+        },
+        "done_looks_like": {
+          "description": "Element 4 of 5: acceptance criteria at MY handoff point.",
+          "type": "string"
+        },
+        "intended_use": {
+          "description": "Element 5 of 5 — the fitness clause, forward-looking: what is THIS deliverable for? Added in v0.2.",
+          "type": "object",
+          "properties": {
+            "enables": {
+              "description": "Decisions this work will enable.",
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "audience_level": {
+              "description": "Stakeholder altitude the deliverable addresses.",
+              "type": "string"
+            },
+            "not_for": {
+              "description": "Contraindications: contexts where a deliverable like this is not recommended. The highest-leverage field — negative space is sharper than positive description.",
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+
+        "exemplar": {
+          "description": "The quality anchor: a prior deliverable this work should be calibrated against.",
+          "type": "object",
+          "required": ["ref"],
+          "properties": {
+            "ref": {
+              "description": "Pointer into an exemplar index.",
+              "type": "string"
+            },
+            "access": {
+              "type": "string",
+              "enum": ["open", "org", "redacted", "synthetic"]
+            },
+            "provenance": {
+              "description": "The fitness clause, backward-looking: what was the exemplar for? An exemplar can be faithfully imitated and still wrong if applied outside its provenance. Added in v0.2.",
+              "type": "object",
+              "properties": {
+                "setting": { "type": "string" },
+                "decision_enabled": { "type": "string" },
+                "audience": { "type": "string" }
+              }
+            },
+            "annotations": {
+              "description": "Director's commentary: which choices were deliberate, which were imposed, and what a weaker version looked like.",
+              "type": "object",
+              "properties": {
+                "deliberate": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "imposed": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "near_miss": { "type": "string" }
+              }
+            }
+          }
+        },
+        "delta": {
+          "description": "Departures from the exemplar, in a constrained vocabulary. The fixed dimension set is deliberate: free-text deltas reintroduce the ambiguity the contract exists to remove, so unknown keys are invalid here.",
+          "type": "object",
+          "properties": {
+            "scope":    { "description": "Coverage: more or less ground.", "type": ["string", "null"] },
+            "depth":    { "description": "Rigor: how far down each thread goes.", "type": ["string", "null"] },
+            "register": { "description": "Tone and formality.", "type": ["string", "null"] },
+            "fidelity": { "description": "Finish: sketch through production.", "type": ["string", "null"] },
+            "audience": { "description": "Who consumes it.", "type": ["string", "null"] },
+            "notes":    { "description": "Free text — last resort, flagged in review.", "type": ["string", "null"] }
+          },
+          "additionalProperties": false
+        },
+
+        "calibration": {
+          "description": "How this contract was derived. Self-reports are systematically optimistic; interview-derived contracts are the elicitation bet this format makes.",
+          "type": "object",
+          "properties": {
+            "method": {
+              "type": "string",
+              "enum": ["self_report", "ai_interview", "prior_project"]
+            },
+            "interviewed_on": {
+              "type": ["string", "null"],
+              "format": "date"
+            },
+            "optimism_flags": {
+              "description": "Known planning-fallacy zones for this contributor and deliverable type.",
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "handoff": {
+          "description": "Who receives the work, and how divergence is handled. Enforcement is deliberately asymmetric: humans get norms, agents get schemas.",
+          "type": "object",
+          "properties": {
+            "to": { "type": "string" },
+            "checkpoint": {
+              "description": "'advisory' (humans): divergence is flagged, not blocked. 'fail_closed' (agents): the agent will not proceed without its declared blocking inputs.",
+              "type": "string",
+              "enum": ["advisory", "fail_closed"]
+            },
+            "reviewer": {
+              "description": "Who sees the divergence flag.",
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
