@@ -4,7 +4,7 @@
 
 AI has made drafting cheap and calibration scarce. The result is “workslop”: work that looks finished and quietly transfers its repair costs downstream. The damage concentrates at handoffs — the joints between contributors who lack the shared history to know what “good” means to each other.
 
-A handoff contract makes those expectations explicit and portable. Each contributor — human or AI agent — declares five things:
+A handoff contract makes those expectations explicit and portable — agreed up front, when a collaboration is being set up, rather than sprung at the moment work changes hands (and, for work a contributor offers repeatedly, pre-staged before the project begins). Each contributor — human or AI agent — declares five things:
 
 - **What I contribute** — the deliverable, named concretely
 - **What I require** — the inputs I need before starting
@@ -13,6 +13,8 @@ A handoff contract makes those expectations explicit and portable. Each contribu
 - **What it’s for** — the decisions it enables, the audience it serves, and what it is *not* for
 
 …anchored by an **exemplar** (“like the NewCo marketing report”) plus a **constrained delta** (“shorter; board audience, not product team”). Senior practitioners already talk this way. This project formalizes it.
+
+A collaboration usually has several handoffs — schedule-setting, kickoff, the interim exchange of interdependent work, draft review, final delivery — and a contract names what “done” means at each, rather than leaving it to be discovered late.
 
 ## Status
 
