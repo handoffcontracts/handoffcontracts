@@ -1,0 +1,133 @@
+# Example handoff contract — a three-party flash team producing a
+# competitive-landscape deck: a freelance strategist, a designer, and
+# an AI agent. Illustrative, not prescriptive: most fields shown here
+# are optional. A minimal contract is three lines; this one is fully
+# elaborated to demonstrate the format.
+#
+# Validate with:  python scripts/validate.py examples/positioning-deck.handoff.yaml
+
+handoff_contract: "0.2"
+
+project:
+  name: "Meridian competitive landscape"
+  brief: >
+    Map the client's five nearest competitors for a board strategy
+    offsite; recommend two positioning moves.
+  quality_spectrum: polished        # board-ready, not production
+  quality_notes: >
+    Board consumes this in 20 minutes. Polish means clarity and
+    confidence, not exhaustiveness.
+  glossary:
+    strategist: >
+      Owns the argument and recommendations. Does not own visual
+      design or data collection.
+
+contributors:
+  - id: strategist-jk
+    kind: human
+    role: "Owns the argument"
+
+    # ——— The five-element contract ———
+    contributes: "Positioning analysis and two recommendations"
+    requires:
+      - input: "Client's current positioning one-pager"
+        from: kickoff
+        blocking: true
+      - input: "Competitor feature matrix"
+        from: agent-claude
+        blocking: true
+    returns: "Annotated outline, 12-15 slides' worth of argument"
+    done_looks_like: >
+      Designer can build slides without asking me what any
+      bullet means.
+    intended_use:                    # fitness clause, forward-looking
+      enables:
+        - "Funding decision between two positioning moves"
+      audience_level: "Board / C-suite"
+      not_for:
+        - "Product-team planning — wrong altitude"
+        - "Any context requiring primary research"
+
+    # ——— Quality anchor: exemplar + delta ———
+    exemplar:
+      ref: "exidx://jk/2024-samsung-positioning"
+      access: redacted               # client-owned; structure shared,
+                                     # content sanitized
+      provenance:                    # fitness clause, backward-looking
+        setting: "Board strategy offsite; mid-market client"
+        decision_enabled: "Choose between two positioning moves"
+        audience: "Board; consumed in 20 minutes"
+      annotations:
+        deliberate:
+          - "Led with the 2x2, not the market narrative"
+          - "Killed the appendix; board never reads it"
+        imposed:
+          - "Samsung required their template — ignore layout"
+        near_miss: >
+          First draft had 4 recommendations; partner cut to 2.
+          Fewer, sharper.
+    delta:
+      scope: "5 competitors, not the exemplar's 9"
+      depth: null                    # same as exemplar
+      register: null                 # same as exemplar
+      fidelity: "Outline only — designer owns finish"
+      audience: "Board, not product team; less jargon"
+
+    # ——— Derivation and enforcement ———
+    calibration:
+      method: ai_interview
+      interviewed_on: "2026-07-01"
+      optimism_flags:
+        - "Underestimates synthesis time ~40% on first-time client domains"
+    handoff:
+      to: designer-mp
+      checkpoint: advisory           # human: divergence flagged, not blocked
+      reviewer: designer-mp
+
+  - id: agent-claude
+    kind: agent
+    role: "Research and drafting support"
+
+    contributes: "Competitor feature matrix; first-pass slide copy"
+    requires:
+      - input: "Competitor list confirmed by strategist"
+        from: strategist-jk
+        blocking: true               # agent will NOT proceed on an
+                                     # unconfirmed list — fails closed
+    returns: "Feature matrix (sheet) + draft copy per outline section"
+    done_looks_like: >
+      Every cell sourced; no unverified claims; draft copy matches
+      quality_spectrum: polished.
+    intended_use:
+      enables:
+        - "Strategist's comparative analysis"
+      audience_level: "Internal working team"
+      not_for:
+        - "Direct board consumption — this is input, not output"
+
+    exemplar:
+      ref: "exidx://team/2026-atlas-matrix"
+      access: org
+      provenance:
+        setting: "Diligence sprint; 5-day funding decision"
+        decision_enabled: "Go/no-go on market entry"
+        audience: "Deal team"
+      annotations:
+        deliberate:
+          - "Sources inline, not endnoted"
+        imposed: []
+    delta:
+      scope: "Add pricing tier column"
+      depth: "Public sources only — no analyst-report synthesis"
+      register: null
+      fidelity: null
+      audience: null
+
+    calibration:
+      method: prior_project
+      optimism_flags:
+        - "Overstates confidence on pricing data"
+    handoff:
+      to: strategist-jk
+      checkpoint: fail_closed        # agents get schemas
+      reviewer: strategist-jk

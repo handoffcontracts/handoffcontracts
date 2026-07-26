@@ -1,0 +1,10 @@
+# core
+pyyaml
+jsonschema>=4.18
+
+# real mode (LLM pipeline)
+anthropic
+
+# optional, only if reading .docx / .pdf artifacts
+python-docx
+pypdf
