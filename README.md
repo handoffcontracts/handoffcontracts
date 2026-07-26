@@ -4,7 +4,7 @@
 
 AI has made drafting cheap and calibration scarce. The result is “workslop”: work that looks finished and quietly transfers its repair costs downstream. The damage concentrates at handoffs — the joints between contributors who lack the shared history to know what “good” means to each other.
 
-A handoff contract makes those expectations explicit and portable — agreed up front, when a collaboration is being set up, rather than sprung at the moment work changes hands (and, for work a contributor offers repeatedly, pre-staged before the project begins). Each contributor — human or AI agent — declares five things:
+A handoff contract makes those expectations explicit and portable. It is **agreed up front**, when a collaboration is being set up rather than sprung at the moment work changes hands — and it spans every handoff in the work, from setting the schedule through kickoff, interim exchanges, review, and final delivery. Each contributor — human or AI agent — declares five things:
 
 - **What I contribute** — the deliverable, named concretely
 - **What I require** — the inputs I need before starting
@@ -14,11 +14,9 @@ A handoff contract makes those expectations explicit and portable — agreed up 
 
 …anchored by an **exemplar** (“like the NewCo marketing report”) plus a **constrained delta** (“shorter; board audience, not product team”). Senior practitioners already talk this way. This project formalizes it.
 
-A collaboration usually has several handoffs — schedule-setting, kickoff, the interim exchange of interdependent work, draft review, final delivery — and a contract names what “done” means at each, rather than leaving it to be discovered late.
-
 ## Status
 
-🚧 **Early and unstable.** This is a research provocation with a v0.2 draft schema, not a finished standard. Expect breaking changes. The concept is described in depth at [handoffcontracts.com](https://handoffcontracts.com) and in writing at [The UX Humanist](https://uxhumanist.substack.com).
+🚧 **Early and unstable.** A research provocation with a v0.2 draft schema and a first working tool — not a finished standard. Expect breaking changes. The concept is described at [handoffcontracts.com](https://handoffcontracts.com) and in writing at [The UX Humanist](https://uxhumanist.substack.com).
 
 ## A minimal example
 
@@ -46,6 +44,12 @@ contributor:
 
 Enforcement is deliberately asymmetric: AI agents **fail closed** on missing required inputs; humans get **advisory checkpoints** that flag divergence at handoff. Humans get norms; agents get schemas.
 
+## Drafting a contract from your own work — `contract-builder/`
+
+Authoring a contract from a blank page is exactly the overhead busy practitioners refuse. So the first tool in this repo doesn’t ask you to. [`contract-builder/`](contract-builder/) reads a **before/after pair of your own drafts** (plus any feedback) and drafts a hypothesis contract by **diffing them** — because the tacit standards you can’t easily state show up in what you *changed* between drafts: what you cut, what you tightened, what you fought to keep. It then reads the draft contract back and asks only the few things it genuinely couldn’t infer.
+
+Two commitments make it trustworthy: it **never fabricates** to look complete (an honest gap beats a plausible guess), and it **degrades gracefully** — more artifacts mean fewer questions, but even a single polished exemplar yields a sparser contract. See [`contract-builder/PRD.md`](contract-builder/PRD.md) for the design and [`contract-builder/README.md`](contract-builder/README.md) to run it.
+
 ## Validating a contract
 
 The schema is machine-enforceable. To check a contract file:
@@ -65,12 +69,14 @@ for the annotated field reference.
 
 | Item | Status |
 |---|---|
-| v0.2 schema, machine-validatable ([`schema/`](schema/)) | Draft |
-| Worked example ([`examples/`](examples/)) | Draft |
+| v0.2 schema, machine-validatable ([`schema/`](schema/)) | On GitHub |
+| Worked example ([`examples/`](examples/)) | On GitHub |
+| `contract-builder/` — drafts a contract from your before/after drafts | Working v0 |
 | `HANDOFF.md` authoring convention | Draft |
 | Federated context-file template (shared standards vs. individual judgment) | In progress — target Sept 2026 |
 | Agent A/B experiment harness (same brief, with/without contract, blind-judged) | In progress — target Sept 2026 |
-| Calibration interview protocol | In progress |
+| Calibration interview protocol | Prototyped in `contract-builder/` |
+| v0.3 schema (staged handoffs as an array, a size/extent facet, an `effort` field) | Planned |
 
 ## Relationship to MCP (and a disambiguation)
 
@@ -80,7 +86,7 @@ It also extends, rather than duplicates, two adjacent conversations: structural 
 
 ## Get involved
 
-This project is looking for collaborators who want to break it in instructive places: does the delta vocabulary survive contact with real practitioners? Can a synthetic exemplar preserve the quality signal of a confidential one? Open an issue, or reach out via [handoffcontracts.com](https://handoffcontracts.com).
+This project is looking for collaborators who want to break it in instructive places: does the delta vocabulary survive contact with real practitioners? Can a synthetic exemplar preserve the quality signal of a confidential one? Does diffing a practitioner’s own drafts really surface their tacit standards? Open an issue, or reach out via [handoffcontracts.com](https://handoffcontracts.com).
 
 ## License
 
